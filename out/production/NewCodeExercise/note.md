@@ -12,5 +12,37 @@ E6
 E16
 背包问题（01背包、完全背包、多重背包）
 
-E17
-正则表达式
+E17、E20
+正则表达式：
+^[1-9]\d*$
+String lowRegex = ".*[a-z].*";
+String upRegex = ".*[A-Z].*";
+String numRegex = ".*\\d.*";
+String otherRegex = ".*[^a-zA-Z\\d].*";
+
+E24
+最长单调子序列问题
+
+E25
+KMP算法
+
+E28
+匈牙利算法
+
+E29
+注意char与数字计算之后，会变成int
+要记得强转回char
+
+E33
+注意数据的范围,本题需要用long，却用了int
+
+E38
+保留6位小数的方法
+① System.out.printf("Formatted Number: %.6f\n", number);
+② DecimalFormat format = new DecimalFormat("#.######");
+   System.out.println(format.format(fifthLanding));
+
+
+
+
+
