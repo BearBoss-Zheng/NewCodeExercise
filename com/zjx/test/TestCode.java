@@ -11,21 +11,15 @@ import java.util.stream.Stream;
  * @Desc
  */
 public class TestCode {
-    public static void main(String[] args) {
-        char[] str = "aC".toCharArray();
-        Arrays.sort(str);
-        List<String> list = new ArrayList<>();
-        list.add("a");
-        list.add("C");
-        list = list.stream().sorted().collect(Collectors.toList());
+    public static void main(String[] args){
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(0,4);
         System.out.println(list);
-        int a = Integer.parseInt("C", 16);
-        System.out.println(a);
-        String s = "1";
-        char c = s.charAt(0);
-        char zero = '0';
-        int i = 1;
-        System.out.println((c-zero) == i);
+
+
     }
 
     // 上升子序列长度
