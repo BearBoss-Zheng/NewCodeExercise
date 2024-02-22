@@ -20,7 +20,19 @@ public class E37_CountRabbit {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         int months = in.nextInt();
+        System.out.println(count(months,1));
 
+    }
+
+    //今天的兔子数量 = 上个月的数量 + 上个月要出生的（去年成熟的兔子）
+    //去年成熟的兔子 = 2个月前的兔子
+    //T(N) = T(N-1) + T(n-2)
+    public static int count(int month,int rabbit){
+        if (month <= 2){
+            return rabbit;
+        }
+
+        return count(month-1,rabbit)+count(month-2,rabbit);
     }
 
 

@@ -1,9 +1,7 @@
 package challenge;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author zjx
@@ -29,7 +27,49 @@ import java.util.Scanner;
  */
 public class E24_Chorus {
 
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        //人数
+        int nums = in.nextInt();
+        //身高
+        int[] heights = new int[nums];
+        for (int i = 0; i < nums; i++) {
+            heights[i] = in.nextInt();
+        }
 
+        int[] pre = getAscSub(heights);
+        //反转数组
+        int[] reverseHeight = new int[nums];
+        for (int i = 0; i < nums; i++) {
+            reverseHeight[i] = heights[nums-i-1];
+        }
+
+        int[] back = getAscSub(reverseHeight);
+
+        int lcp = 0;
+
+        for (int i = 1; i < heights.length - 1; i++) {
+            lcp = Math.max(lcp,pre[i]+back[nums-i-1]-1);
+        }
+
+        System.out.print(nums-lcp);
+    }
+
+    //获取最长子序列（增）
+    public static int[] getAscSub(int[] heights){
+        //第一行为最长子序列的
+        int[] res = new int[heights.length];
+        for (int i = 0; i < heights.length; i++) {
+            res[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if(heights[i] > heights[j]){
+                    res[i] = Math.max(res[i],res[j]+1);
+                }
+            }
+        }
+
+        return res;
+    }
 
 
 

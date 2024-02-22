@@ -1,9 +1,7 @@
 package challenge;
 
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author zjx
@@ -38,8 +36,105 @@ public class E16_ShoppingList {
     public static void main(String[] args) {
 
         Scanner in = new Scanner(System.in);
+        //总钱数
+        int money = in.nextInt();
+        //购物数量
+        int num = in.nextInt();
+        //商品清单
+        Map<Integer, Product> commodityMap = new HashMap<>();
+        //商品主件-附件
+        Map<Product, List<Product>> relation = new HashMap<>();
+        int index = 1;
+        //添加所有的商品，并构建主从关系
+        for (int i = 0; i < num; i++) {
+            Product product = new Product(in.nextInt(), in.nextInt(), in.nextInt());
+            commodityMap.put(index,product);
+            if (product.masterID == 0){
+                //主件
+                relation.put(product,new ArrayList<>());
+            }else {
+                //附件
+                Product master = commodityMap.get(product.masterID);
+                List<Product> products = relation.get(master);
+                products.add(product);
+            }
+            index++;
+        }
 
 
+        //构建01背包
+        int[][] dp = new int[num+1][money+1];
+        for (int i = 1; i <= num; i++) {
+            Product product = commodityMap.get(i);
+            List<Product> salves = relation.get(product);
+            int p0=0,p1=0,p2=0,p3=0,
+                v0=0,v1=0,v2=0,v3=0;
+            //只处理主件
+            if (product.masterID == 0){
+
+                //单个主件
+                p0 = product.price;
+                v0 = p0 * product.degree;
+
+                //主件+附件1
+                if (salves.size()>=1){
+                    p1 = p0 + salves.get(0).price;
+                    v1 = v0 + salves.get(0).price*salves.get(0).degree;
+                }
+
+                //主件+附件2 和 主件+附件1+附件2
+                if (salves.size() >= 2){
+                    p2 = p0 + salves.get(1).price;
+                    v2 = v0 + salves.get(1).price*salves.get(1).degree;
+
+                    p3 = p0 + salves.get(0).price + salves.get(1).price;
+                    v3 = v0 + salves.get(0).price*salves.get(0).degree + salves.get(1).price*salves.get(1).degree;
+                }
+            }
+
+            for (int j = 0; j<= money ; j++) {
+                if (product.masterID != 0){
+                    dp[i][j] = dp[i-1][j];
+                }else {
+                    dp[i][j] = dp[i-1][j];
+                    //购买主件
+                    if (j>=p0){
+                        dp[i][j] = Math.max(dp[i][j],dp[i-1][j-p0]+v0);
+                    }
+
+                    //购买主件+附件1
+                    if (j>=p1){
+                        dp[i][j] = Math.max(dp[i][j],dp[i-1][j-p1]+v1);
+                    }
+
+                    //购买主件+附件2
+                    if (j>=p2){
+                        dp[i][j] = Math.max(dp[i][j],dp[i-1][j-p2]+v2);
+                    }
+
+                    //购买主件+附件1+附件2
+                    if (j>=p3){
+                        dp[i][j] = Math.max(dp[i][j],dp[i-1][j-p3]+v3);
+                    }
+                }
+            }
+        }
+
+        System.out.print(dp[num][money]);
+
+
+    }
+
+    private static class Product{
+        int price;
+        int degree;
+        int masterID;
+
+        public Product(int price, int degree, int masterID) {
+            this.price = price;
+            this.degree = degree;
+            this.masterID = masterID;
+        }
     }
 
 }

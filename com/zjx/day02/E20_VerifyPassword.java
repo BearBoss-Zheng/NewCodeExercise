@@ -70,6 +70,8 @@ public class E20_VerifyPassword {
                     if (i-map.get(pw.substring(i,i+3)) > 2){
                         flag = false;
                         break;
+                    }else {
+
                     }
                 }
             }

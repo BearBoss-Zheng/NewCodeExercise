@@ -27,7 +27,7 @@ public class E44_Sudoku {
         int[][] nums = new int[9][9];
         //记录空位
         List<Pos> list = new ArrayList<>();
-        //填数据
+        //填数据并将空格添入list
         for (int i = 0; i < nums.length; i++) {
             for (int j = 0; j < nums[0].length; j++) {
                 nums[i][j] = in.nextInt();

@@ -24,80 +24,91 @@ public class E44_Sudoku {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        int[][] nums = new int[9][9];
-        //记录空位
+        int[][] chessboard = new int[9][9];
+
+        //存放要填的空格
         List<Pos> list = new ArrayList<>();
-        //填数据
-        for (int i = 0; i < nums.length; i++) {
-            for (int j = 0; j < nums[0].length; j++) {
-                nums[i][j] = in.nextInt();
-                if (nums[i][j] == 0){
+
+        //填写棋盘数据和list
+        for (int i = 0; i < 9 ; i++) {
+            for (int j = 0; j < 9; j++) {
+                chessboard[i][j] = in.nextInt();
+                if (chessboard[i][j] == 0){
                     list.add(new Pos(i,j));
                 }
             }
         }
 
-        write(nums,list,0);
+        //从第一个空格开始填写
+        write(chessboard,list,0);
 
+        //输出结果
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                System.out.print(nums[i][j]);
-                if (j != 8){
+                System.out.print(chessboard[i][j]);
+                if (j!=8){
                     System.out.print(" ");
                 }else {
-                    if (i != 8){
+                    if (i!=8){
                         System.out.println();
                     }
                 }
             }
-
         }
-
 
     }
 
-    public static boolean write(int[][] nums,List<Pos> list,int index){
+    /**
+     *
+     * @param chessboard 棋盘
+     * @param list 需要填写的位置
+     * @param index 当前填写的是第几个空格
+     * @return 当前方案是否可行
+     */
+    public static boolean write(int[][] chessboard,List<Pos> list,int index){
+        //base case
         if (index == list.size()){
             return true;
         }
+
+        //取出当前的位置
         Pos pos = list.get(index);
 
-
-        //先看看这个位置能填什么数
+        //将1-9填入，这是数独可以填写的数
         Set<Integer> set = new HashSet<>();
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i <= 9; i++) {
             set.add(i);
         }
-        
-        //去掉横着的和竖着的
+
+        //将所有已存在的数去掉（横轴，竖轴，3*3宫格内的数字）
         for (int i = 0; i < 9; i++) {
-            set.remove(nums[pos.row][i]);
-            set.remove(nums[i][pos.col]);
+            //横轴
+            set.remove(chessboard[pos.row][i]);
+            //竖轴
+            set.remove(chessboard[i][pos.col]);
         }
 
-        //去掉方格内的
-        int startR = pos.row/3 * 3;
-        int startC = pos.col/3 * 3;
-        for (int i = startR; i <startR+3 ; i++) {
-            for (int j = startC; j <startC+3 ; j++) {
-                set.remove(nums[i][j]);
+        //3*3
+        int startRow = (pos.row/3) * 3;
+        int startCol = (pos.col/3) * 3;
+        for (int i = startRow; i < startRow+3; i++) {
+            for (int j = startCol; j < startCol+3; j++) {
+                set.remove(chessboard[i][j]);
             }
         }
 
-        //剩下的set就是可以填进去的数
+        //此时set中剩余的数，都是当前可以填写的数
         for (Integer tryNum : set) {
-            nums[pos.row][pos.col] = tryNum;
-            if (write(nums,list,index+1)){
+            chessboard[pos.row][pos.col] = tryNum;
+            if (write(chessboard,list,index+1)){
                 return true;
             }
         }
 
-        //都填了都不行，说明之前的数不对
-        nums[pos.row][pos.col] = 0;
+        //没有所有数填进去都不行，那就是之前的值不对，进行回溯
+        chessboard[pos.row][pos.col] = 0;
         return false;
 
-
     }
-
 
 }

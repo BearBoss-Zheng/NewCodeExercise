@@ -33,104 +33,99 @@ public class E32_InterceptPassword {
     }
 
     /**
-     * 最长回文字串
+     * 最长回文子串
      */
     public static int Manacher(String str){
         if (str == null || str.length() == 0){
             return 0;
         }
 
-        if (str.length() == 1){
-            return 1;
-        }
-
-        //abc -> #a#b#c#
-        str = treatString(str);
-
-        //各个位置的最长回文半径
-        int[] pool = new int[str.length()];
-        pool[0] = 0;
-        //保存最大半径
-        int maxR = 0;
+        //修改字符串(abc - #a#b#c#)
+        char[] chs = modifyString(str);
         //当前的中心点
         int center = 0;
-        //当前的点
-        int cur = 1;
+        //中心点的回文半径
+        int r = 0;
+        //当前计算的点
+        int index = 1;
+        //保存各点的回文半径
+        int[] rs = new int[chs.length];
+        //最大回文半径
+        int R = 0;
 
-        int x = 0;
-        while (cur < str.length()){
-
-            if (cur >= center+pool[center]){
+        while (index < chs.length){
+            //index不在center的范围内
+            if (index >= center+r){
                 //暴力扩张
-                pool[cur] = violentExpansion(str,cur,0);
-                center = cur;
-            }else {
-                //以center为原点，cur的对称点
-                int symmetry = center - (cur - center);
-                //以center为原点的回文边界
-                int leftBoundary = center - pool[center];
-                int rightBoundary = center + pool[center];
-                //对称点的左边界
-                int sysL = symmetry - pool[symmetry];
-
-                if (sysL > leftBoundary){
-                    pool[cur] = pool[symmetry];
+                int curR = violentExpansion(chs, index, 0);
+                rs[index] = curR;
+            }else
+            //index在center范围内
+            {
+                //index相对center的对称点
+                int s = center - (index - center);
+                int sr = rs[s];
+                //对称点的回文刚在center的范围内
+                if (index + sr < center + r){
+                    rs[index] = sr;
                 }else {
-                    pool[cur] = violentExpansion(str,cur,0);
-                    if (cur + pool[cur] > rightBoundary){
-                        center = cur;
-                    }
+                    //对称点的回文在center的范围外，那么就要向外扩张了
+                    int curR = violentExpansion(chs,index,center+r-index);
+                    rs[index] = curR;
                 }
             }
-            if (maxR < pool[cur]){
-                x = cur;
-                maxR = pool[cur];
+            //更新数据
+            if (index + rs[index] > center + r){
+                center = index;
+                r = rs[index];
             }
-
-            cur++;
+            R = Math.max(R,rs[index]);
+            index++;
         }
 
-        //奇数  a#v#... R
-        //偶数  #a#a#   R
-
-        return maxR;
+        return R;
 
     }
 
     /**
-     * 暴力外扩，寻找当前位置的最大回文半径
+     * 暴力扩张，获取当前点的最大回文半径
+     * @param chs 字符串
+     * @param index 回文中点
+     * @param r 已知的最长半径
+     * @return 最大回文半径
      */
-    public static int violentExpansion(String str,int index,int r){
-        int L = index - 1 - r;
-        int R = index + 1 + r;
-        while (L>=0 && R<str.length()){
-            if (str.charAt(L) == str.charAt(R)){
-                r++;
-                L--;
-                R++;
-            }else {
-                break;
-            }
+    public static int violentExpansion(char[] chs,int index,int r){
+        while (index + (r+1) < chs.length //右边界
+                && index - (r+1) >= 0  //左边界
+                && chs[index + (r+1)] == chs[index-(r+1)] //满足回文条件
+        ){
+            r++;
         }
 
         return r;
     }
 
+
+
     /**
      * 修改字符串
-     * abc --> #a#b#c#
+     * abc - #a#b#c#
      */
-    public static String treatString(String s){
-        StringBuilder res = new StringBuilder();
-        for (int i = 0; i < s.length() * 2 + 1; i++) {
-            if (i % 2 == 0){
-                res.append("#");
+    public static char[] modifyString(String str){
+        if (str == null || str.length() == 0){
+            return null;
+        }
+
+        char[] chs = new char[str.length()*2+1];
+        for (int i = 0; i < chs.length; i++) {
+            if (i % 2 ==0){
+                chs[i] = '#';
             }else {
-                res.append(s.charAt(i/2));
+                chs[i] = str.charAt(i/2);
             }
         }
 
-        return res.toString();
+        return chs;
     }
 
 }

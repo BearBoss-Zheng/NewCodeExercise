@@ -1,8 +1,6 @@
 package challenge;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author zjx
@@ -47,8 +45,66 @@ public class E28_PrimePartner {
         }
 
         int res = 0;
+        //key为偶数的坐标，value为奇数的坐标
+        Map<Integer,Integer> map = new HashMap<>();
+        // 奇偶配对才有可能是素数
+        // 奇偶配对，如果成了，就看看之前有没有奇数和该偶数配对，如果没有，就直接添加到map
+        // 如果之前有奇数和这个偶数配对，那就看看还有没有空余的偶数能和这个数配对，有的话就让出去
+        // 没有的话就不让
+        int[] matchEven = new int[even.size()];
+        for (int i = 0; i < odd.size(); i++) {
+            int curOdd = odd.get(i);
+            boolean[] used = new boolean[even.size()];
+            if (find(curOdd,even,matchEven,used)){
+                res++;
+            }
+        }
+
+        System.out.println(res);
+
+    }
+
+    /**
+     * 能否为当前值进行配对，且不把别的挤出去
+     * @param odd 正在配对的奇数
+     * @param even 偶数列表
+     * @param matchEven 对应的是匹配哪个奇数
+     * @return
+     */
+    public static boolean find(int odd,List<Integer> even,int[] matchEven,boolean[] used){
+        for (int i = 0; i < even.size(); i++) {
+            if (isPrime(odd + even.get(i)) && !used[i]){
+                used[i] = true;
+                if (matchEven[i] == 0 || find(matchEven[i],even,matchEven,used)){
+                    matchEven[i] = odd;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    //判断是否为素数
+    public static boolean isPrime(int i){
+
+        if (i==2){
+            return true;
+        }
+
+        if (i < 2 || i % 2 == 0){
+            return false;
+        }
 
 
+        int sqrt = (int) Math.sqrt(i);
+        for (int j = 3; j <=sqrt; j+=2) {
+            if (i % j == 0){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

@@ -54,25 +54,53 @@ import java.util.stream.Collectors;
 public class E25_DataClassificationProcess {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        int ISize = in.nextInt();
-        int[] I = new int[ISize];
-        for (int i = 0; i < ISize; i++) {
-            I[i] = in.nextInt();
+        int numI = in.nextInt();
+        String[] I = new String[numI];
+        //收集数据I
+        for (int i = 0; i < I.length; i++) {
+            I[i] = String.valueOf(in.nextInt());
         }
 
-        int RSize = in.nextInt();
-        List<Integer> R = new ArrayList<>();
-        Map<Integer,List<Integer>> RIMap = new HashMap<>();
-        for (int i = 0; i < RSize; i++) {
-            int cur = in.nextInt();
-            //去重
-            if (!R.contains(cur)){
-                R.add(cur);
-                RIMap.put(cur,new ArrayList<>());
+        //收集数据R，利用TreeSet去重+
+        int numR = in.nextInt();
+        Set<String> R = new TreeSet<>(new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return Integer.parseInt(s1) - Integer.parseInt(s2);
             }
+        });
+        for (int i = 0; i < numR; i++) {
+            R.add(in.next());
         }
 
-        R = R.stream().sorted().collect(Collectors.toList());
+        //保存I数据，坐标和数值
+        List<String> I_List = new ArrayList<>();
+        //保存R数据，Ri和数量，每一轮结束，会将I_List也合并进来，这样就是结果了
+        List<String> R_List = new ArrayList<>();
+
+        for (String Ri : R) {
+            int count = 0;
+            for (int i = 0; i < I.length; i++) {
+                if (I[i].contains(Ri)){
+                    count++;
+                    I_List.add(String.valueOf(i));
+                    I_List.add(I[i]);
+                }
+            }
+
+            if (count > 0){
+                R_List.add(Ri);
+                R_List.add(String.valueOf(count));
+                R_List.addAll(I_List);
+            }
+
+            I_List.clear();
+        }
+
+        System.out.print(R_List.size());
+        for (String s : R_List) {
+            System.out.print(" "+s);
+        }
 
 
     }

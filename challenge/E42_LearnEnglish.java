@@ -43,6 +43,73 @@ import java.util.*;
 public class E42_LearnEnglish {
 
     public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        //取到的long
+        long num = in.nextLong();
+        //1-19
+        final String[] NUMS =
+                {"","one","two","three","four","five","six","seven","eight","nine",
+                 "ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen",
+                 "seventeen","eighteen","nineteen"};
+        //整10数
+        final String[] TENS = {"", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+        //度量单位
+        final String[] measure = {"","thousand","million","billion"};
+
+        List<String> list = new ArrayList<>();
+        int power = 0;
+
+        while (num > 0){
+            if (power != 0){
+                list.add(measure[power]);
+            }
+            //取第三位
+            int curN =(int) num % 1000;
+            if (curN % 100 < 20){
+                //如果后两位小于二十，那么可以在NUMS中直接取
+                if (curN % 100 != 0){
+                    list.add(NUMS[curN % 100]);
+                }
+
+                //如果百位后面不为0，且有百位，那么就需要添加and
+                if (curN / 100 != 0 && curN % 100 != 0){
+                    list.add("and");
+                }
+                //如果有百位
+                if (curN / 100 != 0){
+                    list.add("hundred");
+                    list.add(NUMS[curN/100]);
+                }
+            }else {
+                //个位
+                if (curN % 10 != 0){
+                    list.add(NUMS[curN % 10]);
+                }
+                //十位
+                curN/=10;
+                if (curN%10 != 0){
+                    list.add(TENS[curN % 10]);
+                }
+
+                //百位(由于后两位大于等于20，所以一定有and)
+                curN /= 10;
+                if (curN %10 != 0){
+                    list.add("and");
+                    list.add("hundred");
+                    list.add(NUMS[curN % 10]);
+                }
+            }
+
+            num /= 1000;
+            power++;
+        }
+
+        for (int i = list.size()-1; i >= 0; i--) {
+            System.out.print(list.get(i));
+            if (i != 0){
+                System.out.print(" ");
+            }
+        }
 
     }
 
